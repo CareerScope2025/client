@@ -85,6 +85,48 @@ const data: {
     userScore: 82,
     vector: getRandomVector(1),
   },
+  {
+    color: getRandomColor(100),
+    id: 9,
+    name: "한화",
+    userScore: 77,
+    vector: getRandomVector(1),
+  },
+  {
+    color: getRandomColor(100),
+    id: 10,
+    name: "포스코",
+    userScore: 84,
+    vector: getRandomVector(1),
+  },
+  {
+    color: getRandomColor(100),
+    id: 11,
+    name: "현대중공업",
+    userScore: 89,
+    vector: getRandomVector(1),
+  },
+  {
+    color: getRandomColor(100),
+    id: 12,
+    name: "두산",
+    userScore: 81,
+    vector: getRandomVector(1),
+  },
+  {
+    color: getRandomColor(100),
+    id: 13,
+    name: "롯데",
+    userScore: 76,
+    vector: getRandomVector(1),
+  },
+  {
+    color: getRandomColor(100),
+    id: 14,
+    name: "CJ",
+    userScore: 83,
+    vector: getRandomVector(1),
+  },
 ];
 
 const renderData = data.map((item) => ({
@@ -113,7 +155,7 @@ const overview = {
     "**주인의식**: 책임 있는 사람은 혼자서가 아닌 소통을 통해 일합니다. 온전히 나의 것으로 생각하고 실행하며, 아이디어는 실행할 때 비로소 가치가 생깁니다.<br>**경계를 넘은 상상력**: 함께 새로운 것을 만들기 위해서는 '남과 다르게' 생각해야 합니다. 쉬운 대답 대신 깊이 묻고, 틀 밖에서 답을 찾습니다.<br>**변화 주도성**: 성장을 위해 먼저 행동하고, 새로운 길을 엽니다. 기존에 머무르지 않고, 두려움보다 가능성에 집중합니다.",
   website: "www.",
   담당업무:
-    "도면 제\/가정 관리, 소모품 및 사무용품 관리, 연간 고정자산 수리비 및 경비 실적 관리",
+    "도면 제/가정 관리, 소모품 및 사무용품 관리, 연간 고정자산 수리비 및 경비 실적 관리",
   동아리: 0.3,
   수상: 1.5,
   어학: 886,
@@ -164,7 +206,7 @@ export const Space = () => {
               onClick={() => setSelectedIndex(index)}
               onHover={() => setHoveredIndex(index)}
               onUnhover={() => setHoveredIndex(null)}
-              opacity={hovering ? (hoveredIndex === index ? 1 : 0.1) : 1}
+              opacity={hovering ? (hoveredIndex === index ? 1 : 0.3) : 1}
               position={item.position}
               radius={0.05}
             />
@@ -180,7 +222,7 @@ export const Space = () => {
         {hovering && (
           <>
             <Line
-              color="white"
+              color="#C1C1C1"
               dashed
               dashSize={0.1}
               gapSize={0.05}
