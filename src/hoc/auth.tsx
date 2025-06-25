@@ -1,10 +1,12 @@
 import type { KyInstance } from "ky";
-import type { ReactNode } from "react";
 
+import { type ReactNode, useEffect } from "react";
 import { create } from "zustand";
 
 import { client } from "~/lib/client";
 import { Register } from "~/pages/register";
+
+const TOKEN_KEY = "token";
 
 export const useAuth = create<{
   client: KyInstance;
@@ -12,7 +14,8 @@ export const useAuth = create<{
   token: null | string;
 }>((set) => ({
   client,
-  setToken: (token: string) =>
+  setToken: (token: string) => {
+    localStorage.setItem(TOKEN_KEY, token);
     set({
       client: client.extend({
         headers: {
@@ -20,13 +23,22 @@ export const useAuth = create<{
         },
       }),
       token,
-    }),
+    });
+  },
   token: null,
 }));
 
 export const Auth = ({ children }: { children: ReactNode }) => {
-  const token = useAuth((state) => state.token);
-  if (token) {
+  const { setToken, token } = useAuth();
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem(TOKEN_KEY);
+    if (storedToken) {
+      setToken(storedToken);
+    }
+  }, [setToken]);
+
+  if (!token) {
     return <Register />;
   }
   return children;

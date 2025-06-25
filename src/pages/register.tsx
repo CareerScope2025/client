@@ -63,48 +63,46 @@ export const Register = () => {
               password: formData.get("password"),
               schoolName: formData.get("schoolName"),
             };
-            // await client
-            //   .post("auth/signup", {
-            //     json: {
-            //       email: data.email,
-            //       name: data.name,
-            //       password: data.password,
-            //     },
-            //   })
-            //   .json<{ user: string }>();
+            await client
+              .post("auth/signup", {
+                json: {
+                  email: data.email,
+                  name: data.name,
+                  password: data.password,
+                },
+              })
+              .json<{ user: string }>();
 
-            // const { accessToken: token } = await client
-            //   .post("auth/login", {
-            //     json: {
-            //       email: data.email,
-            //       password: data.password,
-            //     },
-            //   })
-            //   .json<{
-            //     accessToken: string;
-            //   }>();
+            const { accessToken: token } = await client
+              .post("auth/login", {
+                json: {
+                  email: data.email,
+                  password: data.password,
+                },
+              })
+              .json<{
+                accessToken: string;
+              }>();
 
-            // await client
-            //   .post("user/survey", {
-            //     headers: {
-            //       Authorization: `Bearer ${token}`,
-            //     },
-            //     json: {
-            //       awardsCount: data.awardsCount,
-            //       certificationCount: data.certificationCount,
-            //       clubActivityCount: data.clubActivityCount,
-            //       englishScores: data.englishScores,
-            //       experienceYears: data.experienceYears,
-            //       gpa: data.gpa,
-            //       internshipCount: data.internshipCount,
-            //       schoolName: data.schoolName,
-            //     },
-            //   })
-            //   .json();
+            await client
+              .post("user/survey", {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+                json: {
+                  awardsCount: data.awardsCount,
+                  certificationCount: data.certificationCount,
+                  clubActivityCount: data.clubActivityCount,
+                  englishScores: data.englishScores,
+                  experienceYears: data.experienceYears,
+                  gpa: data.gpa,
+                  internshipCount: data.internshipCount,
+                  schoolName: data.schoolName,
+                },
+              })
+              .json();
 
-            console.log(data);
-
-            setToken("token");
+            setToken(token);
           }}
         >
           <p className="text-lg">회원가입</p>

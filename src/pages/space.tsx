@@ -25,126 +25,6 @@ import { Textarea } from "~/components/ui/textarea";
 import { useAuth } from "~/hoc/auth";
 import { getRandomColor, getRandomVector, midpoint } from "~/lib/utils";
 
-const data: {
-  color: string;
-  id: number;
-  name: string;
-  userScore: number;
-  vector: [number, number, number];
-}[] = [
-  {
-    color: getRandomColor(100),
-    id: 1,
-    name: "삼성전자",
-    userScore: 85,
-    vector: getRandomVector(1),
-  },
-  {
-    color: getRandomColor(100),
-    id: 2,
-    name: "LG전자",
-    userScore: 90,
-    vector: getRandomVector(1),
-  },
-  {
-    color: getRandomColor(100),
-    id: 3,
-    name: "네이버",
-    userScore: 78,
-    vector: getRandomVector(1),
-  },
-  {
-    color: getRandomColor(100),
-    id: 4,
-    name: "카카오",
-    userScore: 88,
-    vector: getRandomVector(1),
-  },
-  {
-    color: getRandomColor(100),
-    id: 5,
-    name: "현대자동차",
-    userScore: 92,
-    vector: getRandomVector(1),
-  },
-  {
-    color: getRandomColor(100),
-    id: 6,
-    name: "기아",
-    userScore: 80,
-    vector: getRandomVector(1),
-  },
-  {
-    color: getRandomColor(100),
-    id: 7,
-    name: "SK텔레콤",
-    userScore: 75,
-    vector: getRandomVector(1),
-  },
-  {
-    color: getRandomColor(100),
-    id: 8,
-    name: "LG디스플레이",
-    userScore: 82,
-    vector: getRandomVector(1),
-  },
-  {
-    color: getRandomColor(100),
-    id: 9,
-    name: "한화",
-    userScore: 77,
-    vector: getRandomVector(1),
-  },
-  {
-    color: getRandomColor(100),
-    id: 10,
-    name: "포스코",
-    userScore: 84,
-    vector: getRandomVector(1),
-  },
-  {
-    color: getRandomColor(100),
-    id: 11,
-    name: "현대중공업",
-    userScore: 89,
-    vector: getRandomVector(1),
-  },
-  {
-    color: getRandomColor(100),
-    id: 12,
-    name: "두산",
-    userScore: 81,
-    vector: getRandomVector(1),
-  },
-  {
-    color: getRandomColor(100),
-    id: 13,
-    name: "롯데",
-    userScore: 76,
-    vector: getRandomVector(1),
-  },
-  {
-    color: getRandomColor(100),
-    id: 14,
-    name: "CJ",
-    userScore: 83,
-    vector: getRandomVector(1),
-  },
-];
-
-const renderData = data.map((item) => ({
-  color: item.color,
-  id: item.id,
-  name: item.name,
-  position: item.vector.map((v) => ((v * item.userScore) / 100) * 4) as [
-    number,
-    number,
-    number,
-  ],
-
-  userScore: item.userScore,
-}));
-
 const overview = {
   address: "회사 주소",
   avgSalary: 10000,
@@ -172,11 +52,6 @@ export const Space = () => {
   const [hoveredIndex, setHoveredIndex] = useState<null | number>(null);
   const [selectedIndex, setSelectedIndex] = useState<null | number>(null);
 
-  const hovering = typeof hoveredIndex === "number";
-  const hoveredPlanetPos =
-    hoveredIndex !== null ? renderData[hoveredIndex].position : [0, 0, 0];
-  useCursor(hovering, "pointer");
-
   const [p, sp] = useState({
     introduction: "",
     jobs: [] as string[],
@@ -185,10 +60,59 @@ export const Space = () => {
     traits: 0.5,
   });
   const { client } = useAuth();
-  const { data } = useSWR(`user-preference`, (key) => client.get(key).json());
-
   const delayed = useDeferredValue(p);
-  console.log(delayed);
+  const { data } = useSWR(
+    [`user-preference`, delayed],
+    ([url, json]) =>
+      client.post(url, { json }).json<
+        {
+          companyAwards: string;
+          companyCertification: string;
+          companyClubActivity: string;
+          companyEnglish: string;
+          companyGpa: string;
+          companyId: string;
+          companyInternship: string;
+          companyName: string;
+          finalScore: number;
+          jobName: string;
+          salary: string;
+          userAwards: string;
+          userCertification: string;
+          userClubActivity: string;
+          userEnglish: string;
+          userGpa: string;
+          userInternship: string;
+          vision: string;
+        }[]
+      >(),
+    {
+      keepPreviousData: true,
+    },
+  );
+
+  const renderData =
+    data?.map((item) => ({
+      color: getRandomColor(100),
+      id: item.companyId,
+      name: item.companyName,
+      position: getRandomVector(1).map(
+        (v) => (1 - v * item.finalScore) * 4,
+      ) as [number, number, number],
+      userScore: item.finalScore,
+    })) ??
+    ([] as {
+      color: string;
+      id: string;
+      name: string;
+      position: [number, number, number];
+      userScore: number;
+    }[]);
+
+  const hovering = typeof hoveredIndex === "number";
+  const hoveredPlanetPos =
+    hoveredIndex !== null ? renderData[hoveredIndex].position : [0, 0, 0];
+  useCursor(hovering, "pointer");
 
   return (
     <div className="relative h-screen w-screen bg-black">
@@ -259,7 +183,7 @@ export const Space = () => {
                 outlineColor="black"
                 outlineWidth={0.005}
               >
-                유사도: {renderData[hoveredIndex].userScore.toString()}
+                유사도: {renderData[hoveredIndex].userScore}
               </Text>
             </Billboard>
           </>
@@ -332,13 +256,13 @@ export const Space = () => {
             <AButton
               className="w-full"
               onClick={() =>
-                fetch("/sample-report.pdf")
+                fetch("/samsung.pdf")
                   .then((res) => res.blob())
                   .then((blob) => {
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement("a");
                     a.href = url;
-                    a.download = "downloaded.pdf";
+                    a.download = "삼성 맞춤 취업 보고서.pdf";
                     a.click();
                     URL.revokeObjectURL(url);
                   })
