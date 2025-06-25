@@ -17,7 +17,7 @@ import {
 } from "@react-three/postprocessing";
 import { useState } from "react";
 
-import { getRandomColor, getRandomVector } from "~/lib/utils";
+import { getRandomColor, getRandomVector, midpoint } from "~/lib/utils";
 
 const data: {
   color: string;
@@ -88,12 +88,13 @@ const renderData = data.map((item) => ({
   color: item.color,
   id: item.id,
   name: item.name,
-
   position: item.vector.map((v) => ((v * item.userScore) / 100) * 4) as [
     number,
     number,
     number,
   ],
+
+  userScore: item.userScore,
 }));
 
 export const Space = () => {
@@ -161,17 +162,33 @@ export const Space = () => {
           </>
         ))}
         {hovering && (
-          <Line
-            color="white"
-            dashed
-            dashSize={0.1}
-            gapSize={0.05}
-            lineWidth={1}
-            points={[
-              [0, 0, 0], // 태양
-              hoveredPlanetPos as [number, number, number], // 행성 위치
-            ]}
-          />
+          <>
+            <Line
+              color="white"
+              dashed
+              dashSize={0.1}
+              gapSize={0.05}
+              lineWidth={1}
+              points={[[0, 0, 0], hoveredPlanetPos as [number, number, number]]}
+            />
+            <Billboard
+              position={midpoint(
+                [0, 0, 0],
+                hoveredPlanetPos as [number, number, number],
+              )}
+            >
+              <Text
+                anchorX="center"
+                anchorY="bottom"
+                color="white"
+                fontSize={0.4}
+                outlineColor="black"
+                outlineWidth={0.005}
+              >
+                유사도: {renderData[hoveredIndex].userScore.toString()}
+              </Text>
+            </Billboard>
+          </>
         )}
         <OrbitControls
           autoRotate={!hovering}
@@ -214,7 +231,7 @@ const Planet = ({
         position={position}
       >
         <sphereGeometry args={[radius * 5, 16, 16]} />
-        <meshBasicMaterial opacity={0} transparent />
+        <meshBasicMaterial depthWrite={false} opacity={0} transparent />
       </mesh>
     </group>
   );
