@@ -26,7 +26,7 @@ export const useAuth = create<{
 
 export const Auth = ({ children }: { children: ReactNode }) => {
   const token = useAuth((state) => state.token);
-  if (!token) {
+  if (token) {
     return <Register />;
   }
   return children;

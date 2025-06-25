@@ -10,7 +10,7 @@ import {
 } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { XIcon } from "lucide-react";
-import { useState } from "react";
+import { useDeferredValue, useState } from "react";
 import Markdown from "react-markdown";
 
 import { AButton } from "~/components/a-button";
@@ -18,6 +18,13 @@ import { ChartRadar } from "~/components/chart";
 import { Label } from "~/components/ui/label";
 import { MultiSelect } from "~/components/ui/multi-select";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 import { SideModal } from "~/components/ui/side-modal";
 import { Slider } from "~/components/ui/slider";
 import { Textarea } from "~/components/ui/textarea";
@@ -174,6 +181,17 @@ export const Space = () => {
   const hoveredPlanetPos =
     hoveredIndex !== null ? renderData[hoveredIndex].position : [0, 0, 0];
   useCursor(hovering, "pointer");
+
+  const [p, sp] = useState({
+    introduction: "",
+    jobs: [] as string[],
+    salary: 4000,
+    scale: 0,
+    traits: 0,
+  });
+
+  const delayed = useDeferredValue(p);
+  console.log(delayed);
 
   return (
     <div className="relative h-screen w-screen bg-black">
@@ -334,18 +352,37 @@ export const Space = () => {
           </div>
         </div>
       </SideModal>
-      <div className="absolute top-32 bottom-0 left-0 w-80 bg-white/7.5 p-8 text-white backdrop-blur-xs">
+      <form className="absolute top-32 bottom-0 left-0 w-80 bg-white/7.5 p-8 text-white backdrop-blur-xs">
         <div className="text-lg font-medium">희망하는 기업을 찾아보세요</div>
         <div className="mt-5">
           <p className="mb-2">연봉</p>
-          <Slider defaultValue={[33]} max={100} step={1} />
+          <Slider
+            defaultValue={[p.salary]}
+            max={10000}
+            min={2000}
+            onValueChange={(value) => {
+              sp((prev) => ({
+                ...prev,
+                salary: value[0],
+              }));
+            }}
+            step={100}
+          />
           <p className="text-secondary-foreground mt-1 text-right text-sm">
-            4,000만원 이상
+            {p.salary.toLocaleString()}만원 이상
           </p>
         </div>
         <div className="mt-5">
           <p className="mb-2">자기소개</p>
-          <Textarea placeholder="간단하게 자신을 표현해주세요" />
+          <Textarea
+            onChange={(e) => {
+              sp((prev) => ({
+                ...prev,
+                introduction: e.target.value,
+              }));
+            }}
+            placeholder="간단하게 자신을 표현해주세요"
+          />
         </div>
         <div className="mt-5">
           <p className="mb-2">직무</p>
@@ -353,29 +390,32 @@ export const Space = () => {
             animation={2}
             defaultValue={[]}
             maxCount={3}
-            onValueChange={() => {}}
+            onValueChange={(value) => {
+              sp((prev) => ({
+                ...prev,
+                jobs: value,
+              }));
+            }}
             options={[
-              {
-                label: "프론트엔드 개발",
-                value: "frontend",
-              },
-              {
-                label: "백엔드 개발",
-                value: "backend",
-              },
-              {
-                label: "데이터 사이언스",
-                value: "data-science",
-              },
-              {
-                label: "디자인",
-                value: "design",
-              },
-              {
-                label: "기타",
-                value: "etc",
-              },
-            ]}
+              "금융/재무",
+              "마케팅/시장조사",
+              "생산/제조",
+              "생산관리/품질관리",
+              "엔지니어링",
+              "영업/제휴",
+              "인사/총무",
+              "전문직",
+              "기획/경영",
+              "개발",
+              "연구개발",
+              "유통/무역",
+              "데이터",
+              "서비스/고객지원",
+              "디자인",
+            ].map((job) => ({
+              label: job,
+              value: job,
+            }))}
             placeholder="직무 선택"
             variant="inverted"
           />
@@ -412,7 +452,7 @@ export const Space = () => {
             ))}
           </RadioGroup>
         </div>
-      </div>
+      </form>
     </div>
   );
 };
