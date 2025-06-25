@@ -273,7 +273,7 @@ export const Space = () => {
                       const url = URL.createObjectURL(blob);
                       const a = document.createElement("a");
                       a.href = url;
-                      a.download = "삼성 맞춤 취업 보고서.pdf";
+                      a.download = "맞춤 취업 보고서.pdf";
                       a.click();
                       URL.revokeObjectURL(url);
                     })
