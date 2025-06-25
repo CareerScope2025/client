@@ -11,7 +11,7 @@ export const SideModal = ({ children, open }: SideModalProps) => {
       {open && (
         <motion.div
           animate={{ opacity: 1, x: 0 }}
-          className="absolute inset-y-16 right-16 bg-white/7.5 p-8 text-white backdrop-blur-xs"
+          className="absolute inset-y-16 right-16 flex flex-col bg-white/7.5 backdrop-blur-xs"
           exit={{ opacity: 0, x: 200 }}
           initial={{ opacity: 0, x: 200 }}
           style={{ width: 400 }}

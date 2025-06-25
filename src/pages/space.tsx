@@ -1,5 +1,4 @@
 /* eslint-disable react/no-unknown-property */
-
 import {
   Billboard,
   Line,
@@ -10,14 +9,9 @@ import {
   useCursor,
 } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import {
-  EffectComposer,
-  Select,
-  Selection,
-  SelectiveBloom,
-} from "@react-three/postprocessing";
 import { XIcon } from "lucide-react";
 import { useState } from "react";
+import Markdown from "react-markdown";
 
 import { ChartRadar } from "~/components/chart";
 import { Label } from "~/components/ui/label";
@@ -148,24 +142,11 @@ export const Space = () => {
         <ambientLight intensity={0.05} />
         <pointLight color="white" intensity={3} position={[0, 0, 0]} />
         {/* 태양 */}
-        <Selection>
-          <EffectComposer autoClear={false}>
-            <SelectiveBloom
-              intensity={2}
-              luminanceSmoothing={0.9}
-              luminanceThreshold={0.1}
-            />
-          </EffectComposer>
-          <Select enabled>
-            <Sphere args={[0.1, 64, 64]} position={[0, 0, 0]}>
-              <meshStandardMaterial
-                emissive="#fff437"
-                opacity={1}
-                transparent
-              />
-            </Sphere>
-          </Select>
-        </Selection>
+
+        <Sphere args={[0.1, 64, 64]} position={[0, 0, 0]}>
+          <meshStandardMaterial emissive="#fff437" opacity={1} transparent />
+        </Sphere>
+
         {/* 별 배경 */}
         <Stars
           count={3000}
@@ -234,17 +215,62 @@ export const Space = () => {
         />
       </Canvas>
       <SideModal open={typeof selectedIndex === "number"}>
-        <div className="flex justify-between">
+        <div className="flex justify-between p-8 pb-0">
           <div className="text-lg font-medium">LG전자</div>
           <button onClick={() => setSelectedIndex(null)}>
             <XIcon />
           </button>
         </div>
-        <p className="mt-5 text-neutral-100">
-          [LG전자 공식몰] 빅세일 마감 임박! 지금이 바로 가전 구매 타이밍.
-          [타임딜 오픈] LG전자 공식몰에서 인기 가전 특가로 구매해요.
-        </p>
-        <ChartRadar />
+        <div className="flex-1 overflow-y-scroll p-8 pt-0">
+          <div className="mt-5">
+            <div className="grid grid-cols-2 gap-y-4">
+              {(
+                [
+                  {
+                    key: "address",
+                    label: "주소",
+                  },
+                  {
+                    key: "avgSalary",
+                    label: "평균 연봉",
+                  },
+                  {
+                    key: "entrySalary",
+                    label: "초봉",
+                  },
+                  {
+                    key: "scale",
+                    label: "기업 규모",
+                  },
+                  {
+                    key: "traits",
+                    label: "기업 특성",
+                  },
+                ] as const
+              ).map((item) => (
+                <div key={item.key}>
+                  <p className="mb-0.5">{item.label}</p>
+                  <p className="text-sm">
+                    {overview?.[item.key] ?? "정보가 없습니다."}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <ChartRadar />
+          <div className="mb-4">
+            <p className="mb-0.5">인재상</p>
+            <p className="text-sm">
+              <Markdown>
+                {overview.vision.replace(/<br\s*\/?>/gi, "\n\n")}
+              </Markdown>
+            </p>
+          </div>
+          <div>
+            <p className="mb-0.5">담당 업무</p>
+            <p className="text-sm">{overview["담당업무"]}</p>
+          </div>
+        </div>
       </SideModal>
       <div className="absolute top-32 bottom-0 left-0 w-80 bg-white/7.5 p-8 text-white backdrop-blur-xs">
         <div className="text-lg font-medium">희망하는 기업을 찾아보세요</div>
