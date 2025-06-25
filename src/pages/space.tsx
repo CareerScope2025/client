@@ -5,7 +5,10 @@ import { Bloom, EffectComposer } from "@react-three/postprocessing";
 
 export const Space = () => {
   return (
-    <div className="h-screen w-screen bg-black">
+    <div className="relative h-screen w-screen bg-black">
+      <div className="absolute top-10 left-10 z-10 font-serif text-4xl text-white">
+        CareerScope.
+      </div>
       <Canvas camera={{ fov: 60, position: [5, 5, 10] }}>
         {/* Ambient + Point Light */}
         <ambientLight intensity={0.05} />
