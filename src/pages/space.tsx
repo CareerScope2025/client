@@ -101,6 +101,7 @@ const renderData = data.map((item) => ({
 
 export const Space = () => {
   const [hoveredIndex, setHoveredIndex] = useState<null | number>(null);
+  const [selectedIndex, setSelectedIndex] = useState<null | number>(null);
 
   const hovering = typeof hoveredIndex === "number";
   const hoveredPlanetPos =
@@ -126,12 +127,13 @@ export const Space = () => {
             />
           </EffectComposer>
           <Select enabled>
-            <Planet
-              color="#fff437"
-              opacity={1}
-              position={[0, 0, 0]}
-              radius={0.1}
-            />
+            <Sphere args={[0.1, 64, 64]} position={[0, 0, 0]}>
+              <meshStandardMaterial
+                emissive="#fff437"
+                opacity={1}
+                transparent
+              />
+            </Sphere>
           </Select>
         </Selection>
         {/* 별 배경 */}
@@ -148,6 +150,7 @@ export const Space = () => {
             <Planet
               color={item.color}
               key={item.id}
+              onClick={() => setSelectedIndex(index)}
               onHover={() => setHoveredIndex(index)}
               onUnhover={() => setHoveredIndex(null)}
               opacity={hovering ? (hoveredIndex === index ? 1 : 0.1) : 1}
@@ -200,10 +203,10 @@ export const Space = () => {
           enableZoom
         />
       </Canvas>
-      <SideModal open={hovering}>
+      <SideModal open={typeof selectedIndex === "number"}>
         <div className="flex justify-between">
           <div className="text-lg font-medium">LG전자</div>
-          <button>
+          <button onClick={() => setSelectedIndex(null)}>
             <XIcon />
           </button>
         </div>
@@ -218,6 +221,7 @@ export const Space = () => {
 
 const Planet = ({
   color,
+  onClick,
   onHover,
   onUnhover,
   opacity,
@@ -225,8 +229,10 @@ const Planet = ({
   radius,
 }: {
   color: string;
+  onClick?: () => void;
   onHover?: () => void;
   onUnhover?: () => void;
+
   opacity: number;
   position: [number, number, number];
   radius: number;
@@ -240,6 +246,7 @@ const Planet = ({
 
       {/* 감지 전용 hitbox */}
       <mesh
+        onClick={onClick}
         onPointerOut={onUnhover}
         onPointerOver={onHover}
         position={position}
