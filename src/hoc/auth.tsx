@@ -1,14 +1,26 @@
+import type { KyInstance } from "ky";
 import type { ReactNode } from "react";
 
 import { create } from "zustand";
 
+import { client } from "~/lib/client";
 import { Register } from "~/pages/register";
 
-const useAuth = create<{
-  setToken: (token: null | string) => void;
+export const useAuth = create<{
+  client: KyInstance;
+  setToken: (token: string) => void;
   token: null | string;
 }>((set) => ({
-  setToken: (token: null | string) => set({ token }),
+  client,
+  setToken: (token: string) =>
+    set({
+      client: client.extend({
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+      token,
+    }),
   token: null,
 }));
 

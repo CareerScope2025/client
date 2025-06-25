@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { OrbitControls, Stars } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 
@@ -12,8 +13,11 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Separator } from "~/components/ui/separator";
+import { useAuth } from "~/hoc/auth";
+import { client } from "~/lib/client";
 
 export const Register = () => {
+  const { setToken } = useAuth();
   return (
     <div>
       <div className="fixed inset-0 bg-black">
@@ -42,6 +46,64 @@ export const Register = () => {
         <form
           autoComplete="off"
           className="mt-5 bg-white/7.5 p-8 text-white backdrop-blur-xs"
+          onSubmit={async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.currentTarget);
+            const data = {
+              awardsCount: formData.get("awardsCount"),
+              certificationCount: formData.get("certificationCount"),
+              clubActivityCount: formData.get("clubActivityCount"),
+              email: formData.get("email"),
+              englishScores: formData.get("englishScores"),
+              experienceYears: formData.get("experienceYears"),
+              gpa: formData.get("gpa"),
+              internshipCount: formData.get("internshipCount"),
+              name: formData.get("name"),
+              password: formData.get("password"),
+              schoolName: formData.get("schoolName"),
+            };
+            await client
+              .post("auth/signup", {
+                json: {
+                  email: data.email,
+                  name: data.name,
+                  password: data.password,
+                },
+              })
+              .json<{ user: string }>();
+
+            const { accessToken: token } = await client
+              .post("auth/login", {
+                json: {
+                  email: data.email,
+                  password: data.password,
+                },
+              })
+              .json<{
+                accessToken: string;
+              }>();
+
+            await client
+              .post("user/survey", {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+                json: {
+                  awardsCount: data.awardsCount,
+                  certificationCount: data.certificationCount,
+                  clubActivityCount: data.clubActivityCount,
+                  englishScores: data.englishScores,
+                  experienceYears: data.experienceYears,
+                  gpa: data.gpa,
+                  internshipCount: data.internshipCount,
+                  schoolName: data.schoolName,
+                },
+              })
+              .json();
+
+            setToken(token);
+          }}
         >
           <p className="text-lg">회원가입</p>
           <div className="mt-5 grid w-full items-center gap-3">
