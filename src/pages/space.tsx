@@ -19,7 +19,10 @@ import { XIcon } from "lucide-react";
 import { useState } from "react";
 
 import { ChartRadar } from "~/components/chart";
+import { MultiSelect } from "~/components/ui/multi-select";
 import { SideModal } from "~/components/ui/side-modal";
+import { Slider } from "~/components/ui/slider";
+import { Textarea } from "~/components/ui/textarea";
 import { getRandomColor, getRandomVector, midpoint } from "~/lib/utils";
 
 const data: {
@@ -219,6 +222,29 @@ export const Space = () => {
       </SideModal>
       <div className="absolute top-32 bottom-0 left-0 w-80 bg-white/7.5 p-8 text-white backdrop-blur-xs">
         <div className="text-lg font-medium">희망하는 기업을 찾아보세요</div>
+        <div className="mt-5">
+          <p className="mb-2">연봉</p>
+          <Slider defaultValue={[33]} max={100} step={1} />
+          <p className="text-secondary-foreground mt-1 text-right text-sm">
+            4,000만원 이상
+          </p>
+        </div>
+        <div className="mt-5">
+          <p className="mb-2">자기소개</p>
+          <Textarea placeholder="간단하게 자신을 표현해주세요" />
+        </div>
+        <div className="mt-5">
+          <p className="mb-2">직무</p>
+          <MultiSelect
+            animation={2}
+            defaultValue={[]}
+            maxCount={3}
+            onValueChange={() => {}}
+            options={[]}
+            placeholder="직무 선택"
+            variant="inverted"
+          />
+        </div>
       </div>
     </div>
   );
