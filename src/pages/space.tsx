@@ -262,9 +262,9 @@ export const Space = () => {
                 className="w-full"
                 onClick={() =>
                   fetch(
-                    overview?.companyId == 12
+                    overview?.companyName.includes("SK")
                       ? "/sk.pdf"
-                      : overview?.companyId == 7
+                      : overview?.companyName.includes("LG")
                         ? "lg.pdf"
                         : "/samsung.pdf",
                   )
