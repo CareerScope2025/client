@@ -1,10 +1,12 @@
 /* eslint-disable react/no-unknown-property */
 import {
   Billboard,
+  Line,
   OrbitControls,
   Sphere,
   Stars,
   Text,
+  useCursor,
 } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import {
@@ -13,6 +15,7 @@ import {
   Selection,
   SelectiveBloom,
 } from "@react-three/postprocessing";
+import { useState } from "react";
 
 import { getRandomColor, getRandomVector } from "~/lib/utils";
 
@@ -81,7 +84,26 @@ const data: {
   },
 ];
 
+const renderData = data.map((item) => ({
+  color: item.color,
+  id: item.id,
+  name: item.name,
+
+  position: item.vector.map((v) => ((v * item.userScore) / 100) * 4) as [
+    number,
+    number,
+    number,
+  ],
+}));
+
 export const Space = () => {
+  const [hoveredIndex, setHoveredIndex] = useState<null | number>(null);
+
+  const hovering = typeof hoveredIndex === "number";
+  const hoveredPlanetPos =
+    hoveredIndex !== null ? renderData[hoveredIndex].position : [0, 0, 0];
+  useCursor(hovering, "pointer");
+
   return (
     <div className="relative h-screen w-screen bg-black">
       <div className="absolute top-10 left-10 z-10 font-serif text-4xl text-white">
@@ -101,7 +123,12 @@ export const Space = () => {
             />
           </EffectComposer>
           <Select enabled>
-            <Planet color="#fff437" position={[0, 0, 0]} radius={0.1} />
+            <Planet
+              color="#fff437"
+              opacity={1}
+              position={[0, 0, 0]}
+              radius={0.1}
+            />
           </Select>
         </Selection>
         {/* 별 배경 */}
@@ -113,35 +140,41 @@ export const Space = () => {
           radius={100}
           saturation={0}
         />
-        {data.map((item) => (
+        {renderData.map((item, index) => (
           <>
             <Planet
               color={item.color}
               key={item.id}
-              position={
-                item.vector.map((v) => ((v * item.userScore) / 100) * 4) as [
-                  number,
-                  number,
-                  number,
-                ]
-              }
+              onHover={() => setHoveredIndex(index)}
+              onUnhover={() => setHoveredIndex(null)}
+              opacity={hovering ? (hoveredIndex === index ? 1 : 0.1) : 1}
+              position={item.position}
               radius={0.05}
             />
-            <PlanetMarker
-              key={`marker-${item.id}`}
-              name={item.name}
-              position={
-                item.vector.map((v) => ((v * item.userScore) / 100) * 4) as [
-                  number,
-                  number,
-                  number,
-                ]
-              }
-            />
+            {(hovering ? hoveredIndex == index : true) && (
+              <PlanetMarker
+                key={`marker-${item.id}`}
+                name={item.name}
+                position={item.position}
+              />
+            )}
           </>
         ))}
+        {hovering && (
+          <Line
+            color="white"
+            dashed
+            dashSize={0.1}
+            gapSize={0.05}
+            lineWidth={1}
+            points={[
+              [0, 0, 0], // 태양
+              hoveredPlanetPos as [number, number, number], // 행성 위치
+            ]}
+          />
+        )}
         <OrbitControls
-          autoRotate
+          autoRotate={!hovering}
           autoRotateSpeed={0.5}
           enablePan
           enableRotate
@@ -154,17 +187,36 @@ export const Space = () => {
 
 const Planet = ({
   color,
+  onHover,
+  onUnhover,
+  opacity,
   position,
   radius,
 }: {
   color: string;
+  onHover?: () => void;
+  onUnhover?: () => void;
+  opacity: number;
   position: [number, number, number];
   radius: number;
 }) => {
   return (
-    <Sphere args={[radius, 64, 64]} position={position}>
-      <meshStandardMaterial emissive={color} />
-    </Sphere>
+    <group>
+      {/* 보이는 행성 */}
+      <Sphere args={[radius, 64, 64]} position={position}>
+        <meshStandardMaterial emissive={color} opacity={opacity} transparent />
+      </Sphere>
+
+      {/* 감지 전용 hitbox */}
+      <mesh
+        onPointerOut={onUnhover}
+        onPointerOver={onHover}
+        position={position}
+      >
+        <sphereGeometry args={[radius * 5, 16, 16]} />
+        <meshBasicMaterial opacity={0} transparent />
+      </mesh>
+    </group>
   );
 };
 
@@ -181,7 +233,6 @@ const PlanetMarker = ({
       <Text
         anchorX="center"
         anchorY="middle"
-        color="white"
         fontSize={0.2}
         outlineColor="#000"
         outlineWidth={0.005}
