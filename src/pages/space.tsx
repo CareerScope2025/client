@@ -10,7 +10,7 @@ import {
 } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { XIcon } from "lucide-react";
-import { useDeferredValue, useState } from "react";
+import { useDeferredValue, useMemo, useState } from "react";
 import Markdown from "react-markdown";
 import useSWR from "swr";
 
@@ -25,29 +25,6 @@ import { Textarea } from "~/components/ui/textarea";
 import { useAuth } from "~/hoc/auth";
 import { getRandomColor, getRandomVector, midpoint } from "~/lib/utils";
 
-const overview = {
-  address: "회사 주소",
-  avgSalary: 10000,
-  entrySalary: 6000,
-  id: 1,
-  name: "삼성전자",
-  salary: 5750.0,
-  scale: 1.0,
-  traits: 0.7,
-  vision:
-    "**주인의식**: 책임 있는 사람은 혼자서가 아닌 소통을 통해 일합니다. 온전히 나의 것으로 생각하고 실행하며, 아이디어는 실행할 때 비로소 가치가 생깁니다.<br>**경계를 넘은 상상력**: 함께 새로운 것을 만들기 위해서는 '남과 다르게' 생각해야 합니다. 쉬운 대답 대신 깊이 묻고, 틀 밖에서 답을 찾습니다.<br>**변화 주도성**: 성장을 위해 먼저 행동하고, 새로운 길을 엽니다. 기존에 머무르지 않고, 두려움보다 가능성에 집중합니다.",
-  website: "www.",
-  담당업무:
-    "도면 제/가정 관리, 소모품 및 사무용품 관리, 연간 고정자산 수리비 및 경비 실적 관리",
-  동아리: 0.3,
-  수상: 1.5,
-  어학: 886,
-  인턴: 0.5,
-  자격증: 3.1,
-  직무명: "엔지니어링",
-  학점: 3.69,
-};
-
 export const Space = () => {
   const [hoveredIndex, setHoveredIndex] = useState<null | number>(null);
   const [selectedIndex, setSelectedIndex] = useState<null | number>(null);
@@ -61,28 +38,29 @@ export const Space = () => {
   });
   const { client } = useAuth();
   const delayed = useDeferredValue(p);
+
   const { data } = useSWR(
     [`user-preference`, delayed],
     ([url, json]) =>
       client.post(url, { json }).json<
         {
-          companyAwards: string;
-          companyCertification: string;
-          companyClubActivity: string;
-          companyEnglish: string;
-          companyGpa: string;
+          companyAwards: number;
+          companyCertification: number;
+          companyClubActivity: number;
+          companyEnglish: number;
+          companyGpa: number;
           companyId: string;
-          companyInternship: string;
+          companyInternship: number;
           companyName: string;
           finalScore: number;
           jobName: string;
           salary: string;
-          userAwards: string;
-          userCertification: string;
-          userClubActivity: string;
-          userEnglish: string;
-          userGpa: string;
-          userInternship: string;
+          userAwards: number;
+          userCertification: number;
+          userClubActivity: number;
+          userEnglish: number;
+          userGpa: number;
+          userInternship: number;
           vision: string;
         }[]
       >(),
@@ -91,23 +69,31 @@ export const Space = () => {
     },
   );
 
-  const renderData =
-    data?.map((item) => ({
-      color: getRandomColor(100),
-      id: item.companyId,
-      name: item.companyName,
-      position: getRandomVector(1).map(
-        (v) => (1 - v * item.finalScore) * 4,
-      ) as [number, number, number],
-      userScore: item.finalScore,
-    })) ??
-    ([] as {
-      color: string;
-      id: string;
-      name: string;
-      position: [number, number, number];
-      userScore: number;
-    }[]);
+  const renderData = useMemo(
+    () =>
+      data?.map((item) => ({
+        color: getRandomColor(100),
+        id: item.companyId,
+        name: item.companyName,
+        position: getRandomVector(1).map(
+          (v) => v * (1 - item.finalScore) * 6,
+        ) as [number, number, number],
+        userScore: item.finalScore,
+      })) ??
+      ([] as {
+        color: string;
+        id: string;
+        name: string;
+        position: [number, number, number];
+        userScore: number;
+      }[]),
+    [data],
+  );
+
+  const overview = useMemo(() => {
+    if (typeof selectedIndex !== "number") return null;
+    return data?.[selectedIndex];
+  }, [selectedIndex, data]);
 
   const hovering = typeof hoveredIndex === "number";
   const hoveredPlanetPos =
@@ -183,7 +169,8 @@ export const Space = () => {
                 outlineColor="black"
                 outlineWidth={0.005}
               >
-                유사도: {renderData[hoveredIndex].userScore}
+                유사도:{" "}
+                {Math.round(renderData[hoveredIndex].userScore * 100) / 100}
               </Text>
             </Billboard>
           </>
@@ -198,35 +185,23 @@ export const Space = () => {
       </Canvas>
       <SideModal open={typeof selectedIndex === "number"}>
         <div className="flex justify-between p-8 pb-0">
-          <div className="text-lg font-medium">{overview.name}</div>
+          <div className="text-lg font-medium">{overview?.companyName}</div>
           <button onClick={() => setSelectedIndex(null)}>
             <XIcon />
           </button>
         </div>
         <div className="flex-1 overflow-y-scroll p-8 pt-0">
-          <div className="mt-5">
+          <div className="mt-5 mb-5">
             <div className="grid grid-cols-2 gap-y-4">
               {(
                 [
                   {
-                    key: "address",
-                    label: "주소",
+                    key: "salary",
+                    label: "연봉",
                   },
                   {
-                    key: "avgSalary",
-                    label: "평균 연봉",
-                  },
-                  {
-                    key: "entrySalary",
-                    label: "초봉",
-                  },
-                  {
-                    key: "scale",
-                    label: "기업 규모",
-                  },
-                  {
-                    key: "traits",
-                    label: "기업 특성",
+                    key: "jobName",
+                    label: "직무",
                   },
                 ] as const
               ).map((item) => (
@@ -239,18 +214,47 @@ export const Space = () => {
               ))}
             </div>
           </div>
-          <ChartRadar />
+          <ChartRadar
+            chartData={[
+              {
+                company: overview?.companyAwards ?? 0,
+                label: "수상",
+                user: overview?.userAwards ?? 0,
+              },
+              {
+                company: overview?.companyCertification ?? 0,
+                label: "자격증",
+                user: overview?.userCertification ?? 0,
+              },
+              {
+                company: overview?.companyClubActivity ?? 0,
+                label: "동아리",
+                user: overview?.userClubActivity ?? 0,
+              },
+              {
+                company: (overview?.companyEnglish ?? 0) / 400,
+                label: "어학",
+                user: (overview?.userEnglish ?? 0) / 400,
+              },
+              {
+                company: overview?.companyGpa ?? 0,
+                label: "학점",
+                user: overview?.userGpa ?? 0,
+              },
+              {
+                company: overview?.companyInternship ?? 0,
+                label: "인턴",
+                user: overview?.userInternship ?? 0,
+              },
+            ]}
+          />
           <div className="mb-4">
             <p className="mb-0.5">인재상</p>
             <p className="text-sm">
               <Markdown>
-                {overview.vision.replace(/<br\s*\/?>/gi, "\n\n")}
+                {overview?.vision.replace(/<br\s*\/?>/gi, "\n\n")}
               </Markdown>
             </p>
-          </div>
-          <div>
-            <p className="mb-0.5">담당 업무</p>
-            <p className="text-sm">{overview["담당업무"]}</p>
           </div>
           <div className="mt-8">
             <AButton
