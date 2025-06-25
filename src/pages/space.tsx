@@ -15,8 +15,10 @@ import {
   Selection,
   SelectiveBloom,
 } from "@react-three/postprocessing";
+import { XIcon } from "lucide-react";
 import { useState } from "react";
 
+import { SideModal } from "~/components/ui/side-modal";
 import { getRandomColor, getRandomVector, midpoint } from "~/lib/utils";
 
 const data: {
@@ -198,6 +200,18 @@ export const Space = () => {
           enableZoom
         />
       </Canvas>
+      <SideModal open={hovering}>
+        <div className="flex justify-between">
+          <div className="text-lg font-medium">LG전자</div>
+          <button>
+            <XIcon />
+          </button>
+        </div>
+        <p className="mt-5 text-neutral-100">
+          [LG전자 공식몰] 빅세일 마감 임박! 지금이 바로 가전 구매 타이밍.
+          [타임딜 오픈] LG전자 공식몰에서 인기 가전 특가로 구매해요.
+        </p>
+      </SideModal>
     </div>
   );
 };
