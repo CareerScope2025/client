@@ -46,6 +46,7 @@ export const Register = () => {
         <form
           autoComplete="off"
           className="mt-5 bg-white/7.5 p-8 text-white backdrop-blur-xs"
+          noValidate
           onSubmit={async (e) => {
             e.preventDefault();
 
@@ -85,7 +86,7 @@ export const Register = () => {
               }>();
 
             await client
-              .post("user/survey", {
+              .post("users/survey", {
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },
