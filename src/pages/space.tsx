@@ -130,8 +130,6 @@ const data: {
   },
 ];
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 const renderData = data.map((item) => ({
   color: item.color,
   id: item.id,
@@ -150,7 +148,7 @@ const overview = {
   avgSalary: 10000,
   entrySalary: 6000,
   id: 1,
-  name: "삼성",
+  name: "삼성전자",
   salary: 5750.0,
   scale: 1.0,
   traits: 0.7,
@@ -182,7 +180,7 @@ export const Space = () => {
       <div className="absolute top-10 left-10 z-10 font-serif text-4xl text-white">
         CareerScope.
       </div>
-      <Canvas camera={{ fov: 60, position: [5, 5, 10] }}>
+      <Canvas camera={{ fov: 45, position: [5, 5, 10] }}>
         {/* Ambient + Point Light */}
         <ambientLight intensity={0.05} />
         <pointLight color="white" intensity={3} position={[0, 0, 0]} />
@@ -196,7 +194,7 @@ export const Space = () => {
         <Stars
           count={3000}
           depth={50}
-          factor={4}
+          factor={8}
           fade
           radius={100}
           saturation={0}
@@ -253,7 +251,7 @@ export const Space = () => {
         )}
         <OrbitControls
           autoRotate={!hovering}
-          autoRotateSpeed={0.5}
+          autoRotateSpeed={2}
           enablePan
           enableRotate
           enableZoom
@@ -261,7 +259,7 @@ export const Space = () => {
       </Canvas>
       <SideModal open={typeof selectedIndex === "number"}>
         <div className="flex justify-between p-8 pb-0">
-          <div className="text-lg font-medium">LG전자</div>
+          <div className="text-lg font-medium">{overview.name}</div>
           <button onClick={() => setSelectedIndex(null)}>
             <XIcon />
           </button>
@@ -319,18 +317,16 @@ export const Space = () => {
             <AButton
               className="w-full"
               onClick={() =>
-                sleep(3000).then(() =>
-                  fetch("/sample-report.pdf")
-                    .then((res) => res.blob())
-                    .then((blob) => {
-                      const url = URL.createObjectURL(blob);
-                      const a = document.createElement("a");
-                      a.href = url;
-                      a.download = "downloaded.pdf";
-                      a.click();
-                      URL.revokeObjectURL(url);
-                    }),
-                )
+                fetch("/sample-report.pdf")
+                  .then((res) => res.blob())
+                  .then((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "downloaded.pdf";
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  })
               }
             >
               보고서로 확인하기
@@ -358,7 +354,28 @@ export const Space = () => {
             defaultValue={[]}
             maxCount={3}
             onValueChange={() => {}}
-            options={[]}
+            options={[
+              {
+                label: "프론트엔드 개발",
+                value: "frontend",
+              },
+              {
+                label: "백엔드 개발",
+                value: "backend",
+              },
+              {
+                label: "데이터 사이언스",
+                value: "data-science",
+              },
+              {
+                label: "디자인",
+                value: "design",
+              },
+              {
+                label: "기타",
+                value: "etc",
+              },
+            ]}
             placeholder="직무 선택"
             variant="inverted"
           />
