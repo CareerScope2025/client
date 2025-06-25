@@ -49,7 +49,7 @@ export const Space = () => {
           companyClubActivity: number;
           companyEnglish: number;
           companyGpa: number;
-          companyId: string;
+          companyId: number;
           companyInternship: number;
           companyName: string;
           finalScore: number;
@@ -91,7 +91,7 @@ export const Space = () => {
   );
 
   const overview = useMemo(() => {
-    if (typeof selectedIndex !== "number") return null;
+    if (typeof selectedIndex !== "number") return;
     return data?.[selectedIndex];
   }, [selectedIndex, data]);
 
@@ -257,23 +257,31 @@ export const Space = () => {
             </p>
           </div>
           <div className="mt-8">
-            <AButton
-              className="w-full"
-              onClick={() =>
-                fetch("/samsung.pdf")
-                  .then((res) => res.blob())
-                  .then((blob) => {
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = "삼성 맞춤 취업 보고서.pdf";
-                    a.click();
-                    URL.revokeObjectURL(url);
-                  })
-              }
-            >
-              보고서로 확인하기
-            </AButton>
+            {overview && (
+              <AButton
+                className="w-full"
+                onClick={() =>
+                  fetch(
+                    overview?.companyId == 12
+                      ? "/sk.pdf"
+                      : overview?.companyId == 7
+                        ? "lg.pdf"
+                        : "/samsung.pdf",
+                  )
+                    .then((res) => res.blob())
+                    .then((blob) => {
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement("a");
+                      a.href = url;
+                      a.download = "삼성 맞춤 취업 보고서.pdf";
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    })
+                }
+              >
+                보고서로 확인하기
+              </AButton>
+            )}
           </div>
         </div>
       </SideModal>
