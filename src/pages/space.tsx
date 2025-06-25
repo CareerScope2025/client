@@ -106,6 +106,29 @@ const renderData = data.map((item) => ({
   userScore: item.userScore,
 }));
 
+const overview = {
+  address: "회사 주소",
+  avgSalary: 10000,
+  entrySalary: 6000,
+  id: 1,
+  name: "삼성",
+  salary: 5750.0,
+  scale: 1.0,
+  traits: 0.7,
+  vision:
+    "**주인의식**: 책임 있는 사람은 혼자서가 아닌 소통을 통해 일합니다. 온전히 나의 것으로 생각하고 실행하며, 아이디어는 실행할 때 비로소 가치가 생깁니다.<br>**경계를 넘은 상상력**: 함께 새로운 것을 만들기 위해서는 '남과 다르게' 생각해야 합니다. 쉬운 대답 대신 깊이 묻고, 틀 밖에서 답을 찾습니다.<br>**변화 주도성**: 성장을 위해 먼저 행동하고, 새로운 길을 엽니다. 기존에 머무르지 않고, 두려움보다 가능성에 집중합니다.",
+  website: "www.",
+  담당업무:
+    "도면 제\/가정 관리, 소모품 및 사무용품 관리, 연간 고정자산 수리비 및 경비 실적 관리",
+  동아리: 0.3,
+  수상: 1.5,
+  어학: 886,
+  인턴: 0.5,
+  자격증: 3.1,
+  직무명: "엔지니어링",
+  학점: 3.69,
+};
+
 export const Space = () => {
   const [hoveredIndex, setHoveredIndex] = useState<null | number>(null);
   const [selectedIndex, setSelectedIndex] = useState<null | number>(null);
