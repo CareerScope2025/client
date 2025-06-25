@@ -15,7 +15,7 @@ export const Space = () => {
         <pointLight color="white" intensity={3} position={[0, 0, 0]} />
 
         {/* 태양 */}
-        <Sun />
+        <Planet color="#fff437" position={[0, 0, 0]} radius={0.1} />
 
         {/* 별 배경 */}
         <Stars
@@ -42,10 +42,18 @@ export const Space = () => {
   );
 };
 
-const Sun = () => {
+const Planet = ({
+  color,
+  position,
+  radius,
+}: {
+  color: string;
+  position: [number, number, number];
+  radius: number;
+}) => {
   return (
-    <Sphere args={[0.1, 64, 64]} position={[0, 0, 0]}>
-      <meshStandardMaterial emissive="#fff437" />
+    <Sphere args={[radius, 64, 64]} position={position}>
+      <meshStandardMaterial emissive={color} />
     </Sphere>
   );
 };
