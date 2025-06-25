@@ -12,22 +12,17 @@ import { Canvas } from "@react-three/fiber";
 import { XIcon } from "lucide-react";
 import { useDeferredValue, useState } from "react";
 import Markdown from "react-markdown";
+import useSWR from "swr";
 
 import { AButton } from "~/components/a-button";
 import { ChartRadar } from "~/components/chart";
 import { Label } from "~/components/ui/label";
 import { MultiSelect } from "~/components/ui/multi-select";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
 import { SideModal } from "~/components/ui/side-modal";
 import { Slider } from "~/components/ui/slider";
 import { Textarea } from "~/components/ui/textarea";
+import { useAuth } from "~/hoc/auth";
 import { getRandomColor, getRandomVector, midpoint } from "~/lib/utils";
 
 const data: {
@@ -186,9 +181,11 @@ export const Space = () => {
     introduction: "",
     jobs: [] as string[],
     salary: 4000,
-    scale: 0,
-    traits: 0,
+    scale: "대기업" as "공기업" | "대기업" | "스타트업" | "중소기업",
+    traits: 0.5,
   });
+  const { client } = useAuth();
+  const { data } = useSWR(`user-preference`, (key) => client.get(key).json());
 
   const delayed = useDeferredValue(p);
   console.log(delayed);
@@ -422,7 +419,17 @@ export const Space = () => {
         </div>
         <div className="mt-5">
           <p className="mb-2">워라밸</p>
-          <Slider defaultValue={[33]} max={100} step={1} />
+          <Slider
+            defaultValue={[p.traits]}
+            max={1}
+            onValueChange={(value) => {
+              sp((prev) => ({
+                ...prev,
+                traits: value[0],
+              }));
+            }}
+            step={0.01}
+          />
           <div className="text-secondary-foreground mt-1 flex justify-between text-sm">
             <p>워커홀릭</p>
             <p>워라밸</p>
@@ -430,24 +437,19 @@ export const Space = () => {
         </div>
         <div className="mt-5">
           <p className="mb-2">기업 규모</p>
-          <RadioGroup defaultValue="big">
-            {[
-              {
-                label: "대기업",
-                value: "big",
-              },
-              {
-                label: "중소기업",
-                value: "medium",
-              },
-              {
-                label: "스타트업",
-                value: "startup",
-              },
-            ].map((item) => (
-              <div className="flex items-center gap-3" key={item.value}>
-                <RadioGroupItem id={item.value} value={item.value} />
-                <Label htmlFor={item.value}>{item.label}</Label>
+          <RadioGroup
+            defaultValue={p.scale}
+            onValueChange={(val) => {
+              sp((prev) => ({
+                ...prev,
+                scale: val as "공기업" | "대기업" | "스타트업" | "중소기업",
+              }));
+            }}
+          >
+            {["대기업", "중견기업", "스타트업", "공기업"].map((item) => (
+              <div className="flex items-center gap-3" key={item}>
+                <RadioGroupItem id={item} value={item} />
+                <Label htmlFor={item}>{item}</Label>
               </div>
             ))}
           </RadioGroup>
