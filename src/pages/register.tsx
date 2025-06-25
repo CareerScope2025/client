@@ -4,7 +4,13 @@ import { Canvas } from "@react-three/fiber";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { MultiSelect } from "~/components/ui/multi-select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 import { Separator } from "~/components/ui/separator";
 
 export const Register = () => {
@@ -30,7 +36,9 @@ export const Register = () => {
         </Canvas>
       </div>
       <div className="relative z-10 mx-auto w-[480px] p-5">
-        <div className="py-8 font-serif text-4xl text-white">CareerScope.</div>
+        <div className="py-8 pl-1 font-serif text-4xl text-white">
+          CareerScope.
+        </div>
         <form
           autoComplete="off"
           className="mt-5 bg-white/7.5 p-8 text-white backdrop-blur-xs"
@@ -75,36 +83,27 @@ export const Register = () => {
           </div>
           <div className="mt-5 grid w-full items-center gap-3">
             <Label htmlFor="schoolName">최종 학벌</Label>
-            <MultiSelect
-              animation={2}
-              defaultValue={[]}
-              maxCount={3}
-              onValueChange={() => {}}
-              options={[
-                {
-                  label: "프론트엔드 개발",
-                  value: "frontend",
-                },
-                {
-                  label: "백엔드 개발",
-                  value: "backend",
-                },
-                {
-                  label: "데이터 사이언스",
-                  value: "data-science",
-                },
-                {
-                  label: "디자인",
-                  value: "design",
-                },
-                {
-                  label: "기타",
-                  value: "etc",
-                },
-              ]}
-              placeholder="직무 선택"
-              variant="inverted"
-            />
+            <Select>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="최종 학벌 선택" />
+              </SelectTrigger>
+              <SelectContent>
+                {[
+                  "서울4년",
+                  "수도권4년",
+                  "지방4년",
+                  "초대졸",
+                  "대학원",
+                  "해외대학",
+                  "대졸4년",
+                  "고졸",
+                ].map((item) => (
+                  <SelectItem key={item} value={item}>
+                    {item}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="mt-5 grid w-full items-center gap-3">
             <Label htmlFor="experienceYears">경력</Label>
