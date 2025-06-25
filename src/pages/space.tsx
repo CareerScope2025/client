@@ -1,4 +1,5 @@
 /* eslint-disable react/no-unknown-property */
+
 import {
   Billboard,
   Line,
@@ -19,7 +20,9 @@ import { XIcon } from "lucide-react";
 import { useState } from "react";
 
 import { ChartRadar } from "~/components/chart";
+import { Label } from "~/components/ui/label";
 import { MultiSelect } from "~/components/ui/multi-select";
+import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { SideModal } from "~/components/ui/side-modal";
 import { Slider } from "~/components/ui/slider";
 import { Textarea } from "~/components/ui/textarea";
@@ -244,6 +247,38 @@ export const Space = () => {
             placeholder="직무 선택"
             variant="inverted"
           />
+        </div>
+        <div className="mt-5">
+          <p className="mb-2">워라밸</p>
+          <Slider defaultValue={[33]} max={100} step={1} />
+          <div className="text-secondary-foreground mt-1 flex justify-between text-sm">
+            <p>워커홀릭</p>
+            <p>워라밸</p>
+          </div>
+        </div>
+        <div className="mt-5">
+          <p className="mb-2">기업 규모</p>
+          <RadioGroup defaultValue="big">
+            {[
+              {
+                label: "대기업",
+                value: "big",
+              },
+              {
+                label: "중소기업",
+                value: "medium",
+              },
+              {
+                label: "스타트업",
+                value: "startup",
+              },
+            ].map((item) => (
+              <div className="flex items-center gap-3" key={item.value}>
+                <RadioGroupItem id={item.value} value={item.value} />
+                <Label htmlFor={item.value}>{item.label}</Label>
+              </div>
+            ))}
+          </RadioGroup>
         </div>
       </div>
     </div>
