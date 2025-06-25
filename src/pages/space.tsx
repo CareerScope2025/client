@@ -13,6 +13,7 @@ import { XIcon } from "lucide-react";
 import { useState } from "react";
 import Markdown from "react-markdown";
 
+import { AButton } from "~/components/a-button";
 import { ChartRadar } from "~/components/chart";
 import { Label } from "~/components/ui/label";
 import { MultiSelect } from "~/components/ui/multi-select";
@@ -128,6 +129,8 @@ const data: {
     vector: getRandomVector(1),
   },
 ];
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const renderData = data.map((item) => ({
   color: item.color,
@@ -311,6 +314,27 @@ export const Space = () => {
           <div>
             <p className="mb-0.5">담당 업무</p>
             <p className="text-sm">{overview["담당업무"]}</p>
+          </div>
+          <div className="mt-8">
+            <AButton
+              className="w-full"
+              onClick={() =>
+                sleep(3000).then(() =>
+                  fetch("/sample-report.pdf")
+                    .then((res) => res.blob())
+                    .then((blob) => {
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement("a");
+                      a.href = url;
+                      a.download = "downloaded.pdf";
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    }),
+                )
+              }
+            >
+              보고서로 확인하기
+            </AButton>
           </div>
         </div>
       </SideModal>

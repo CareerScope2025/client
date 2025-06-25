@@ -1,5 +1,13 @@
-import { Space } from "~/pages/space";
+import { BrowserRouter } from "router2";
 
+import { Space } from "~/pages/space";
 export const App = () => {
-  return <Space />;
+  return (
+    <BrowserRouter
+      routes={{
+        "/": () => <Space />,
+        "/404": () => "",
+      }}
+    />
+  );
 };
