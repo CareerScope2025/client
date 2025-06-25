@@ -1,3 +1,5 @@
+import { Space } from "~/pages/space";
+
 export const App = () => {
-  return <div>world</div>;
+  return <Space />;
 };
