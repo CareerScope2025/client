@@ -63,89 +63,99 @@ export const Register = () => {
               password: formData.get("password"),
               schoolName: formData.get("schoolName"),
             };
-            await client
-              .post("auth/signup", {
-                json: {
-                  email: data.email,
-                  name: data.name,
-                  password: data.password,
-                },
-              })
-              .json<{ user: string }>();
+            // await client
+            //   .post("auth/signup", {
+            //     json: {
+            //       email: data.email,
+            //       name: data.name,
+            //       password: data.password,
+            //     },
+            //   })
+            //   .json<{ user: string }>();
 
-            const { accessToken: token } = await client
-              .post("auth/login", {
-                json: {
-                  email: data.email,
-                  password: data.password,
-                },
-              })
-              .json<{
-                accessToken: string;
-              }>();
+            // const { accessToken: token } = await client
+            //   .post("auth/login", {
+            //     json: {
+            //       email: data.email,
+            //       password: data.password,
+            //     },
+            //   })
+            //   .json<{
+            //     accessToken: string;
+            //   }>();
 
-            await client
-              .post("user/survey", {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-                json: {
-                  awardsCount: data.awardsCount,
-                  certificationCount: data.certificationCount,
-                  clubActivityCount: data.clubActivityCount,
-                  englishScores: data.englishScores,
-                  experienceYears: data.experienceYears,
-                  gpa: data.gpa,
-                  internshipCount: data.internshipCount,
-                  schoolName: data.schoolName,
-                },
-              })
-              .json();
+            // await client
+            //   .post("user/survey", {
+            //     headers: {
+            //       Authorization: `Bearer ${token}`,
+            //     },
+            //     json: {
+            //       awardsCount: data.awardsCount,
+            //       certificationCount: data.certificationCount,
+            //       clubActivityCount: data.clubActivityCount,
+            //       englishScores: data.englishScores,
+            //       experienceYears: data.experienceYears,
+            //       gpa: data.gpa,
+            //       internshipCount: data.internshipCount,
+            //       schoolName: data.schoolName,
+            //     },
+            //   })
+            //   .json();
 
-            setToken(token);
+            console.log(data);
+
+            setToken("token");
           }}
         >
           <p className="text-lg">회원가입</p>
           <div className="mt-5 grid w-full items-center gap-3">
             <Label htmlFor="name">이름</Label>
-            <Input id="name" type="text" />
+            <Input id="name" name="name" type="text" />
           </div>
           <div className="mt-5 grid w-full items-center gap-3">
             <Label htmlFor="email">이메일</Label>
-            <Input id="email" type="email" />
+            <Input id="email" name="email" type="email" />
           </div>
           <div className="mt-5 grid w-full items-center gap-3">
             <Label htmlFor="password">비밀번호</Label>
-            <Input id="password" type="password" />
+            <Input id="password" name="password" type="password" />
           </div>
           <Separator className="my-8" />
           <div className="mt-5 grid w-full items-center gap-3">
             <Label htmlFor="gpa">학점</Label>
-            <Input id="gpa" type="number" />
+            <Input id="gpa" name="gpa" type="number" />
           </div>
           <div className="mt-5 grid w-full items-center gap-3">
             <Label htmlFor="englishScores">어학 성적 (토익 점수)</Label>
-            <Input id="englishScores" type="number" />
+            <Input id="englishScores" name="englishScores" type="number" />
           </div>
           <div className="mt-5 grid w-full items-center gap-3">
             <Label htmlFor="certificationCount">자격증 개수</Label>
-            <Input id="certificationCount" type="number" />
+            <Input
+              id="certificationCount"
+              name="certificationCount"
+              type="number"
+            />
           </div>
           <div className="mt-5 grid w-full items-center gap-3">
             <Label htmlFor="internshipCount">인턴 횟수</Label>
-            <Input id="internshipCount" type="number" />
+            <Input id="internshipCount" name="internshipCount" type="number" />
           </div>
           <div className="mt-5 grid w-full items-center gap-3">
             <Label htmlFor="clubActivityCount">동아리 횟수</Label>
-            <Input id="clubActivityCount" type="number" />
+            <Input
+              id="clubActivityCount"
+              name="clubActivityCount"
+              type="number"
+            />
           </div>
           <div className="mt-5 grid w-full items-center gap-3">
             <Label htmlFor="awardsCount">수상 횟수</Label>
-            <Input id="awardsCount" type="number" />
+            <Input id="awardsCount" name="awardsCount" type="number" />
           </div>
           <div className="mt-5 grid w-full items-center gap-3">
             <Label htmlFor="schoolName">최종 학벌</Label>
-            <Select>
+            <Select name="schoolName">
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="최종 학벌 선택" />
               </SelectTrigger>
@@ -169,7 +179,7 @@ export const Register = () => {
           </div>
           <div className="mt-5 grid w-full items-center gap-3">
             <Label htmlFor="experienceYears">경력</Label>
-            <Input id="experienceYears" type="number" />
+            <Input id="experienceYears" name="experienceYears" type="number" />
           </div>
           <Button className="mt-8 mb-5">제출</Button>
         </form>
