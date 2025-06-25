@@ -1,11 +1,6 @@
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts";
 
-import {
-  type ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "~/components/ui/chart";
+import { type ChartConfig, ChartContainer } from "~/components/ui/chart";
 
 export const description = "A radar chart";
 
