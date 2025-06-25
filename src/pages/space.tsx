@@ -18,6 +18,7 @@ import {
 import { XIcon } from "lucide-react";
 import { useState } from "react";
 
+import { ChartRadar } from "~/components/chart";
 import { SideModal } from "~/components/ui/side-modal";
 import { getRandomColor, getRandomVector, midpoint } from "~/lib/utils";
 
@@ -214,7 +215,11 @@ export const Space = () => {
           [LG전자 공식몰] 빅세일 마감 임박! 지금이 바로 가전 구매 타이밍.
           [타임딜 오픈] LG전자 공식몰에서 인기 가전 특가로 구매해요.
         </p>
+        <ChartRadar />
       </SideModal>
+      <div className="absolute top-32 bottom-0 left-0 w-80 bg-white/7.5 p-8 text-white backdrop-blur-xs">
+        <div className="text-lg font-medium">희망하는 기업을 찾아보세요</div>
+      </div>
     </div>
   );
 };
